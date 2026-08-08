@@ -1,0 +1,228 @@
+/* =========================================================
+   SPIDER-MAN CASE FILE — shared design system
+   One stylesheet, two pages (index.html + characters.html).
+   Theme: a Daily Bugle investigation board — cork, brass pins,
+   red string and redacted photos. Every "person" on either
+   page uses the same .file-card component, which is what
+   visually ties the two pages together.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&display=swap');
+
+:root {
+  --ink: #0f0d0b;
+  --board: #1c1712;
+  --line: rgba(216, 169, 79, .16);
+  --text: #f2ead8;
+  --muted: #b7a98a;
+  --brass: #d8a94f;
+  --red: #c1352b;
+  --blue: #4f7fa6;
+  --grey: #6b6459;
+  --gap: clamp(20px, 5vw, 64px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background:
+    radial-gradient(rgba(216, 169, 79, .05) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--board);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+.mono { font-family: 'Special Elite', monospace; }
+.display { font-family: 'Bebas Neue', sans-serif; text-transform: uppercase; letter-spacing: .01em; }
+
+/* ---------- layout helpers ---------- */
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--gap); }
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* ---------- topbar (shared nav) ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px var(--gap);
+  background: linear-gradient(var(--ink), rgba(15, 13, 11, .94));
+  border-bottom: 2px solid var(--brass);
+}
+.brand { display: flex; flex-direction: column; font-size: 24px; }
+.brand small { font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: .18em; color: var(--brass); text-transform: uppercase; margin-top: 2px; }
+.tabs { display: flex; gap: 6px; }
+.tab {
+  font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: .07em; text-transform: uppercase;
+  padding: 9px 16px; border: 1px solid var(--line); color: var(--muted); text-decoration: none; transition: .2s;
+}
+.tab:hover { color: var(--text); border-color: var(--brass); }
+.tab.is-active { color: var(--ink); background: var(--brass); border-color: var(--brass); }
+.btn-nav { padding: 9px 16px; font-size: 11px; margin-left: 4px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-block; font-family: 'Special Elite', monospace; font-size: 12px; letter-spacing: .06em;
+  text-transform: uppercase; padding: 13px 22px; border: 1px solid var(--red); color: #fff;
+  background: var(--red); text-decoration: none; transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 0 0 3px rgba(193, 53, 43, .18), 0 6px 18px rgba(193, 53, 43, .35);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 0 0 4px rgba(193, 53, 43, .22), 0 10px 24px rgba(193, 53, 43, .45); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--line); box-shadow: none; }
+.btn-ghost:hover { border-color: var(--brass); transform: translateY(-2px); box-shadow: none; }
+
+/* ---------- stamp component ---------- */
+.stamp {
+  display: inline-block; font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; padding: 4px 9px; border: 2px solid currentColor; border-radius: 3px;
+  transform: rotate(-4deg); color: var(--red);
+}
+.stamp[data-role="hero"] { color: var(--blue); }
+.stamp[data-role="ally"] { color: var(--brass); }
+.stamp[data-role="villain"] { color: var(--red); }
+.stamp[data-role="classified"] { color: var(--grey); }
+
+/* ---------- hero (both pages) ---------- */
+.hero {
+  position: relative; padding: 120px var(--gap) 64px; border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(216, 169, 79, .06), transparent 60%);
+  overflow: hidden;
+}
+.hero::before { /* strip of masking tape, corner of the board */
+  content: ""; position: absolute; top: 26px; left: var(--gap); width: 96px; height: 28px;
+  background:
+    repeating-linear-gradient(-55deg, rgba(0, 0, 0, .05) 0 2px, transparent 2px 5px),
+    rgba(242, 234, 216, .22);
+  border-left: 1px solid rgba(242, 234, 216, .3);
+  border-right: 1px solid rgba(242, 234, 216, .3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .35);
+  transform: rotate(-6deg);
+}
+.hero::after { /* faint web sigil — fills the empty side of the hero, pure CSS */
+  content: ""; position: absolute; right: -10%; top: 50%; translate: 0 -50%; width: 46vw; height: 46vw; max-width: 560px; max-height: 560px;
+  border: 1px solid var(--line); border-radius: 50%; opacity: .7; pointer-events: none;
+  background: repeating-conic-gradient(from 0deg, var(--line) 0deg .6px, transparent .6px 30deg);
+}
+.hero h1 { max-width: 780px; } /* keeps the headline clear of the pinned poster */
+.hero-poster {
+  position: absolute; right: clamp(24px, 6vw, 90px); top: 52%; translate: 0 -50%;
+  width: min(26vw, 260px); rotate: 3deg; padding: 10px 10px 26px; background: var(--text);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, .55); z-index: 1;
+}
+.hero-poster::before { /* brass pin */
+  content: ""; position: absolute; top: -6px; left: 50%; translate: -50% 0; width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe3a0, var(--brass) 60%, #8a5f22); box-shadow: 0 2px 4px rgba(0, 0, 0, .5); z-index: 2;
+}
+.hero-poster img { width: 100%; display: block; filter: sepia(.12) contrast(1.03); }
+.case-no { color: var(--brass); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 10px; }
+.hero h1 { font-size: clamp(48px, 9vw, 110px); line-height: .92; }
+.hero h1 span { color: var(--red); display: block; }
+.hero-desc { max-width: 560px; color: var(--muted); margin: 18px 0 28px; font-size: 15px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ---------- section heading ---------- */
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 34px; }
+.section-head .case-no { margin-bottom: 6px; }
+.section-head h2 { font-size: clamp(32px, 4.5vw, 54px); }
+.section-head p { max-width: 340px; color: var(--muted); font-size: 13px; }
+section.block { padding: 72px 0; border-bottom: 1px solid var(--line); }
+
+/* ---------- file-card: the reusable "person" component ---------- */
+.file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 22px; }
+.file-card { background: rgba(0, 0, 0, .18); border: 1px solid var(--line); position: relative; transition: opacity .2s, transform .2s; }
+.file-card.is-hidden { display: none; }
+.file-card::before { /* brass pin */
+  content: ""; position: absolute; top: -6px; left: 50%; translate: -50% 0; width: 11px; height: 11px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe3a0, var(--brass) 60%, #8a5f22); box-shadow: 0 2px 4px rgba(0, 0, 0, .5); z-index: 2;
+}
+.file-photo {
+  position: relative; aspect-ratio: 3 / 4; overflow: hidden;
+  background:
+    radial-gradient(circle at 32% 22%, rgba(216, 169, 79, .22), transparent 55%),
+    radial-gradient(circle at 72% 82%, rgba(0, 0, 0, .65), transparent 60%),
+    linear-gradient(160deg, #34281a, #171310 75%);
+  display: grid; place-items: center;
+}
+.file-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; z-index: 0; }
+.file-photo.has-photo::before { content: none; } /* hide the initials once a real photo is added */
+.file-photo::before { content: attr(data-mark); font-family: 'Bebas Neue', sans-serif; font-size: 64px; letter-spacing: .04em; color: rgba(242, 234, 216, .16); }
+.file-photo::after { /* film grain, sits above the photo too so the look stays consistent */
+  content: ""; position: absolute; inset: 0; opacity: .5; mix-blend-mode: overlay;
+  background-image: radial-gradient(rgba(255, 255, 255, .5) .5px, transparent .6px);
+  background-size: 3px 3px;
+}
+.redact-bar { position: absolute; left: 16%; right: 16%; top: 36%; height: 11%; background: #050403; }
+.file-info { padding: 16px 18px 20px; }
+.file-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: .01em; margin: 10px 0 6px; }
+.file-info p { font-size: 12.5px; color: var(--muted); }
+.link-more { display: inline-block; margin-top: 10px; font-family: 'Special Elite', monospace; font-size: 11px; color: var(--brass); text-decoration: none; }
+.link-more:hover { text-decoration: underline; }
+
+/* ---------- report / story (index page) ---------- */
+.report-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 48px; }
+.report-grid p.story { color: var(--muted); font-size: 15px; margin-bottom: 22px; }
+.quote { font-family: 'Special Elite', monospace; font-size: 15px; border-left: 3px solid var(--red); padding: 6px 0 6px 18px; margin-bottom: 24px; color: var(--text); }
+.quote em { display: block; margin-top: 8px; color: var(--muted); font-style: normal; font-size: 12px; }
+.specs { display: grid; gap: 10px; font-size: 13px; }
+.specs div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+.specs span:first-child { color: var(--muted); font-family: 'Special Elite', monospace; text-transform: uppercase; font-size: 11px; }
+
+/* ---------- trailer block ---------- */
+.evidence { text-align: center; }
+.trailer-frame {
+  position: relative; display: block; width: 100%; max-width: 860px; aspect-ratio: 16 / 9; margin: 26px auto 0;
+  border: 1px solid var(--line); outline: 6px solid var(--ink); box-shadow: 0 0 0 1px var(--brass), 0 20px 50px rgba(0, 0, 0, .5);
+  overflow: hidden; background: var(--ink);
+}
+.trailer-frame img { width: 100%; height: 100%; object-fit: cover; opacity: .8; transition: opacity .2s, transform .3s; }
+.trailer-frame:hover img { opacity: 1; transform: scale(1.03); }
+.play-badge {
+  position: absolute; inset: 0; margin: auto; width: 76px; height: 76px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 22px; color: #fff; background: rgba(193, 53, 43, .88);
+  box-shadow: 0 0 0 8px rgba(0, 0, 0, .25); transition: transform .2s;
+}
+.trailer-frame:hover .play-badge { transform: scale(1.08); }
+
+/* ---------- city / field office selector ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.chip {
+  font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: .04em; text-transform: uppercase;
+  padding: 9px 14px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; transition: .2s;
+}
+.chip:hover, .chip[aria-pressed="true"] { border-color: var(--brass); color: var(--text); background: rgba(216, 169, 79, .12); }
+.result { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 20px; }
+.result p { font-size: 13px; color: var(--muted); }
+
+/* ---------- filter bar (characters page) ---------- */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.filter-bar button { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  padding: 9px 15px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; transition: .2s; }
+.filter-bar button:hover, .filter-bar button[aria-pressed="true"] { background: var(--brass); color: var(--ink); border-color: var(--brass); }
+
+/* ---------- footer ---------- */
+footer.foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 26px var(--gap); font-family: 'Special Elite', monospace; font-size: 11px; color: var(--muted); }
+footer.foot a { text-decoration: none; margin-left: 16px; color: var(--brass); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 760px) {
+  .topbar { padding: 14px 18px; flex-wrap: wrap; row-gap: 10px; }
+  .tabs { gap: 4px; flex-wrap: wrap; }
+  .tab { padding: 8px 10px; font-size: 10px; }
+  .btn-nav { padding: 8px 12px; font-size: 10px; }
+  .hero { padding: 100px 18px 48px; }
+  .hero::after { opacity: .35; }
+  .hero-poster { display: none; }
+  .wrap { padding: 0 18px; }
+  .report-grid { grid-template-columns: 1fr; }
+  footer.foot { flex-direction: column; align-items: flex-start; }
+  footer.foot a { margin-left: 0; margin-right: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}
